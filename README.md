@@ -3,7 +3,7 @@ Tools for doing systematic reviews of scientific literature
 
 ## Requirements
 
-You'll need an OpenAI.com account, and to create a key at https://beta.openai.com/account/api-keys
+You'll need an OpenAI.com account (sign up at https://beta.openai.com/signup), and to create a key at https://beta.openai.com/account/api-keys
 
 You can provide your key to the script by doing:
 ```

@@ -492,16 +492,17 @@ def get_embeddings(input_file, output_file):
                 with open(output_file, 'w') as output_f:
                     output_f.write(str(embedding) + '\n')
 
-# Combine text and embeddings to a JSON file
+# Combine filename, text, and embeddings to a JSON file
 def combine_text_and_embeddings_to_json(downloaded_files):
     """
     This function combines text and embeddings from a list of downloaded files and writes them to a JSON file.
+    The json file contains a list of dictionaries, each dictionary containing the file name, text, and embedding.
 
     Parameters:
     downloaded_files (list): A list of downloaded files.
 
     Returns:
-    None. Writes the combined text and embeddings to a JSON file.
+    None. Writes the combined file name, text, and embeddings to a JSON file.
     """
     # Create a list to store the combined text and embeddings
     combined_text_and_embeddings = []
@@ -517,11 +518,17 @@ def combine_text_and_embeddings_to_json(downloaded_files):
             # Read the embedding file
             with open(embedding_file, 'r') as f:
                 embedding = f.read()
+            # The embedding is a string, so convert it to a list of floats, split on commas, and remove the brackets
+            embedding = [float(x) for x in embedding[1:-2].split(',')]
+
             # Read the section file
             with open(section_file, 'r') as f:
                 text = f.read()
-            # Create a dictionary with the text and embedding
+            # Extract just the file name from section_file
+            section_file_basename = os.path.basename(section_file)
+            # Create a dictionary with the text, embedding, and file name
             text_and_embedding = {
+                'file_name': section_file_basename,
                 'text': text,
                 'embedding': embedding
             }

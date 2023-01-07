@@ -538,10 +538,20 @@ def combine_text_and_embeddings_to_json(downloaded_files):
         json.dump(combined_text_and_embeddings, f, indent=4)
     print(f"Wrote combined text and embeddings to {output_file}")            
 
-if __name__ == '__main__':
+# Download and extract articles from a CSV file and get embeddings
+def main():
+    """
+    This function downloads and extracts articles from a given CSV file, gets the embeddings for each section text file, and combines all the section text files and their corresponding embeddings into a single JSON file.
+
+    Args:
+        csv_filename (str): The name of the CSV file containing the articles to be downloaded and extracted.
+
+    Returns:
+        None
+    """
     # Check that a filename was passed as an argument
     if len(sys.argv) != 2:
-        print("Usage: python download_articles.py <filename>.csv")
+        print("Usage: python download_articles_and_embeddings.py <filename>.csv")
         sys.exit(1)
 
     # Get the filename from the command line arguments
@@ -574,3 +584,7 @@ if __name__ == '__main__':
         
     # Combine all the section text files and their corresponding embeddings into a single json file
     combine_text_and_embeddings_to_json(downloaded_files)
+
+
+if __name__ == '__main__':
+    main()

@@ -51,7 +51,7 @@ This script is used to answer a given question using a combination of OpenAI's G
 To use the script, run the following command:
 
 ```
-python script.py <csv_file> <json_file> <question_string> [n]
+python answer_questions.py <csv_file> <json_file> <question_string> [n]
 ```
 
 Where:

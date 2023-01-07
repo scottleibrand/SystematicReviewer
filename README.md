@@ -57,14 +57,14 @@ This script is used to answer a given question using a combination of OpenAI's G
 To use the script, run the following command:
 
 ```
-python answer_questions.py <csv_file> <json_file> <question_string> [n]
+python answer_questions.py <filename>.csv combined_text_and_embeddings.json <question_string> [n]
 ```
 
 Where:
 
 - `csv_file` is the path to the CSV file containing the data to be processed.
 - `json_file` is the path to the JSON file containing the embeddings.
-- `question_string` is the question to be answered.
+- `question_string` is the question to be answered. Be sure to put quotes around it.
 - `n` is an optional parameter specifying the number of results to return (defaults to 3).
 
 #### Description

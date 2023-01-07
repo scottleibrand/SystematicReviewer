@@ -9,7 +9,7 @@ You can provide your key to the script by doing:
 ```
 export OPENAI_API_KEY=sk-YourSuperSecretBigLongStringOfRandomLettersAndNumbers
 ```
-prior to running either of the scripts below.
+in your terminal prior to running either of the scripts below.
 
 ## Installation
 

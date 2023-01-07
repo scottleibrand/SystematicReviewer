@@ -1,0 +1,11 @@
+requests
+html2text
+pdfminer
+python-magic
+tiktoken
+openai
+matplotlib
+plotly
+pandas
+scipy
+scikit-learn

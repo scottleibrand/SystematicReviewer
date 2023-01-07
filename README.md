@@ -3,6 +3,8 @@ Tools for doing systematic reviews of scientific literature
 
 ## Requirements
 
+### OpenAI API Key
+
 You'll need an OpenAI.com account (sign up at https://beta.openai.com/signup), and to create a key at https://beta.openai.com/account/api-keys
 
 You can provide your key to the script by doing:
@@ -10,6 +12,10 @@ You can provide your key to the script by doing:
 export OPENAI_API_KEY=sk-YourSuperSecretBigLongStringOfRandomLettersAndNumbers
 ```
 in your terminal prior to running either of the scripts below.
+
+### Input data
+
+These scripts assume that you are starting with a .csv file containing an ArticleURL column containing the URL of each paper's full text HTML or PDF, and optionally Title and Abstract columns.
 
 ## Installation
 
@@ -23,7 +29,7 @@ pip install -r requirements.txt
 
 ### download_articles_and_embeddings.py
 
-This script downloads articles from a given CSV file, extracts the text from each article, and writes each section of the article to a separate text file. It then calculates the embedding of each section text file and combines all the section text files and their corresponding embeddings into a single JSON file.
+This script downloads papers from a given CSV file, extracts the text from each one, and writes each section of the paper to a separate text file. It then calculates the embedding of each section text file and combines all the section text files and their corresponding embeddings into a single JSON file.
 
 #### Usage
 
@@ -33,13 +39,13 @@ To use this script, run the following command:
 python download_articles_and_embeddings.py <filename>.csv
 ```
 
-where `<filename>.csv` is the name of the CSV file containing the articles to be downloaded and extracted.
+where `<filename>.csv` is the name of the CSV file containing the papers to be downloaded and extracted.
 
-The CSV should have an ArticleURL column containing the URL of each article's full text HTML or PDF.
+The CSV should have an ArticleURL column containing the URL of each paper's full text HTML or PDF.
 
 #### Output
 
-The script will output a JSON file containing the text and embeddings of each section of the article.
+The script will output a JSON file containing the text and embeddings of each section of the paper.
 
 ### answer_questions.py
 

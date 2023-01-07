@@ -19,7 +19,7 @@ import tiktoken
 from openai.embeddings_utils import get_embedding, cosine_similarity
 
 
-
+# Downloads the content of a URL to a file.
 def download_url_to_file(url, file_path):
     """Downloads the content of a URL to a file.
 
@@ -35,6 +35,7 @@ def download_url_to_file(url, file_path):
     with open(file_path, 'wb') as fh:
         fh.write(content)
 
+# Extracts the text from an HTML file and returns it as a string.
 def extract_text_from_html(html_path):
     # Read the HTML file
     with open(html_path, "r") as html_file:
@@ -45,6 +46,7 @@ def extract_text_from_html(html_path):
     
     return text
 
+# Extracts the text from a PDF file and returns it as a string.
 def extract_text_from_pdf(pdf_path):
     """Extracts the text from a PDF file and returns it as a string.
 
@@ -83,6 +85,7 @@ def extract_text_from_pdf(pdf_path):
 
     return text
 
+# Splits text into a list of tuples, where each tuple contains a section header and the corresponding text.
 def split_into_sections(text):
     """Splits a string of text into a list of tuples, where each tuple contains a section header and the corresponding text.
 
@@ -140,6 +143,7 @@ def split_into_sections(text):
 
     return sections
 
+# Splits text into subsection tuples containing a section header and the corresponding text.
 def split_section_into_subsections(section_header, section_content, enc, max_tokens=3000):
     """Splits a section of text into smaller parts, each of which is returned
     as a tuple containing a subsection header and the corresponding text.
@@ -187,7 +191,20 @@ def split_section_into_subsections(section_header, section_content, enc, max_tok
 
     return result
 
+# Splits a subsection by paragraphs if required based on a maximum number of tokens.
 def split_subsection_into_paragraphs(subsection_header, subsection_content, enc, max_tokens=3000):
+    """
+    This function splits a subsection by paragraphs if required based on a maximum number of tokens.
+
+    Parameters:
+        subsection_header (str): The header of the subsection.
+        subsection_content (str): The content of the subsection.
+        enc (Encoder): An encoder object used to encode and decode the subsection content.
+        max_tokens (int, optional): The maximum number of tokens allowed in each part. Defaults to 3000.
+
+    Returns:
+        list: A list of tuples containing the subsection header and content for each part.
+    """
     # Encode the subsection content as a sequence of tokens
     tokens = enc.encode(subsection_content)
 
@@ -219,7 +236,15 @@ def split_subsection_into_paragraphs(subsection_header, subsection_content, enc,
 
     return parts
 
+# Combines <1000 token subsections of text into larger chunks with a maximum of 2000 tokens.
 def combine_subsections(subsections, enc):
+    """
+    This function combines subsections of text into larger chunks of text.
+    It takes in a list of subsections, each containing a header and content, and an encoder object.
+    It returns a list of combined subsections, each containing a header and content.
+    The combined subsections are created by combining subsections that have less than 1000 tokens each,
+    and the total number of tokens in the combined subsection is less than 2000.
+    """
     # Initialize the list of combined subsections
     combined_subsections = []
 
@@ -263,7 +288,15 @@ def combine_subsections(subsections, enc):
 
     return combined_subsections
 
+# Splits a text into sections and writes each section to a separate text file.
 def sectionize_content(text, content_file, enc):
+    """
+    This function takes in a text, content file, and encoding as parameters and splits the text into sections.
+    It then writes each section to a separate text file, combining adjacent tuples with less than 1000 tokens
+    until they exceed 1000 tokens.
+    It also updates the subheader if there are multiple sequential identical subheaders.
+    Finally, it writes the content to the output file if the subsection length is greater than 350 characters.
+    """
     text = text
     content_file = content_file
     enc = enc
@@ -311,7 +344,18 @@ def sectionize_content(text, content_file, enc):
                 print(
                     f"{subheader} ({len(subcontent)} characters, {len(subcontent_tokens)} tokens) written to {output_path}")
 
+# Download URL content, extract text, and write each section to a separate text file.
 def download_and_extract(csv_filename):
+    """
+    This function uses a CSV file containing URLs and extracts the text from each URL.
+    It then sectionizes the content and writes each section to a separate text file.
+
+    Inputs:
+    csv_filename: The name of the CSV file containing the URLs
+
+    Outputs:
+    downloaded_files: An array of all the downloaded file names
+    """
     # Create a temporary directory to store the downloaded files
     #temp_dir = tempfile.mkdtemp()
 
@@ -410,7 +454,14 @@ def download_and_extract(csv_filename):
         # Return the list of downloaded files
         return downloaded_files
 
+# Get embeddings from an input file and write them to an output file
 def get_embeddings(input_file, output_file):
+    """
+    This function takes an input file and an output file as parameters.
+    It reads the input file line by line and calculates the token count of each line.
+    If the token count is less than 8000, it calculates the embedding using the
+    text-embedding-ada-002 engine and writes the embedding to the output file as a string.
+    """
     # Open the input file for reading and the output file for writing
     with open(input_file, 'r') as input_f:
         # Iterate over the lines in the input file
@@ -441,7 +492,17 @@ def get_embeddings(input_file, output_file):
                 with open(output_file, 'w') as output_f:
                     output_f.write(str(embedding) + '\n')
 
+# Combine text and embeddings to a JSON file
 def combine_text_and_embeddings_to_json(downloaded_files):
+    """
+    This function combines text and embeddings from a list of downloaded files and writes them to a JSON file.
+
+    Parameters:
+    downloaded_files (list): A list of downloaded files.
+
+    Returns:
+    None. Writes the combined text and embeddings to a JSON file.
+    """
     # Create a list to store the combined text and embeddings
     combined_text_and_embeddings = []
 
@@ -511,8 +572,5 @@ if __name__ == '__main__':
             print(f"Getting embedding for {section_file} and writing to {output_file}")
             get_embeddings(section_file, output_file)
         
-    # Combine all the embeddings into a single json file
-    #combine_embeddings(downloaded_files)
-
     # Combine all the section text files and their corresponding embeddings into a single json file
     combine_text_and_embeddings_to_json(downloaded_files)

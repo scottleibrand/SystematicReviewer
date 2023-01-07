@@ -1,7 +1,4 @@
-# Description: This script takes a CSV file containing a list of URLs,
-# a JSON file containing the embeddings, a question string, and a number n,
-# and returns the top n answers to the question from the embeddings.
-
+# Description: This script answers questions using the embeddings of the context and the question.
 import os
 import re
 import pandas as pd
@@ -204,12 +201,11 @@ def main(csv_file, json_file, question_string, n):
     df.to_csv(csv_file.replace('.csv', '.out.csv'), index=False)
     
     
-        #return res
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
-        print("Usage: python script.py <csv_file> <json_file> <question_string> [n]")
+        print("Usage: python answer_questions.py <csv_file> <json_file> <question_string> [n]")
         sys.exit(1)
     csv_file = sys.argv[1]
     json_file = sys.argv[2]

@@ -17,28 +17,9 @@ def search_embeddings(df, question_string, n):
         question_string,
         engine="text-embedding-ada-002"
     )
-    #print(question_embedding)
-    #print(df)
-    #print(df['embedding'][0])
-    # Convert the embeddings column from a string to a list of floats
-    #df['embedding'] = df['embedding'].apply(lambda x: [float(i) for i in x.split()])
     # Add a similarity column to the dataframe calculated using the cosine similarity function
     df["similarities"] = df.embedding.apply(lambda x: cosine_similarity(x, question_embedding))
-    #df['similarity'] = df.apply(
-    #    lambda row: cosine_similarity(row['embedding'], question_embedding),
-    #    axis=1
-    #)
-
-    # Sort the dataframe by the similarity column
-    #df = df.sort_values(by='similarity', ascending=False)
-
-    # Return the top n results
-    #return df.head(n)
-
-
-    #df["similarities"] = df.embedding.apply(lambda x: cosine_similarity(x, question_embedding))
-    #df["similarities"] = df.embedding.apply(lambda x: cosine_similarity(np.array(x).astype(float), np.array(embedding).astype(float)))
-
+    
     res = (
         df.sort_values("similarities", ascending=False)
         .head(n)
@@ -118,7 +99,6 @@ def main(csv_file, json_file, question_string, n):
         base_file_name = os.path.basename(url)
         if base_file_name == '':
             base_file_name = url.rsplit('/', 2)[-2]
-        # If the file name is longer than 100 characters, use the part after the last non-alphanumeric, non-period and non-underscore character
         # If it's still longer than 100 characters, truncate it
         if len(base_file_name) > 100:
             base_file_name = base_file_name[:100]
@@ -236,5 +216,4 @@ if __name__ == '__main__':
     question_string = sys.argv[3]
     n = int(sys.argv[4]) if len(sys.argv) > 4 else 3
     main(csv_file, json_file, question_string, n)
-    #res = main(csv_file, json_file, question_string, n)
-    #print(res)
+    

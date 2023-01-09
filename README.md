@@ -31,6 +31,8 @@ pip install -r requirements.txt
 
 This script downloads papers from a given CSV file, extracts the text from each one, and writes each section of the paper to a separate text file. It then calculates the embedding of each section text file and combines all the section text files and their corresponding embeddings into a single JSON file.
 
+It also outputs a .indexed.csv file that adds a SectionsFound column to the original CSV. This indicates the number of sections that were downloaded from the provided URL, for comparison agains min_sections below and to provide an indication of which URLs likely did vs. didn't have full text available at the provided URL.
+
 #### Usage
 
 To use this script, run the following command:
@@ -65,7 +67,8 @@ Where:
 - `csv_file` is the path to the CSV file containing the data to be processed.
 - `json_file` is the path to the JSON file containing the embeddings.
 - `questions.csv or string` is either a file containing the questions to be answered, or a single question string in quotes.
-- `n` is an optional parameter specifying the number of results to return (defaults to 3).
+- `top_n_results` is an optional parameter (default=1) specifying the number of results to return (defaults to 3).
+- `min_sections` is an optional parameter (default=2) specifying the minimum number of sections that must be found to process a paper
 
 The questions.csv must contain a Question column. It can optionally contain a Type column.
 

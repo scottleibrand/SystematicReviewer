@@ -255,7 +255,7 @@ def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
     base_file_name = os.path.splitext(base_file_name)[0]
     full_file_name = f"{path}/{base_file_name}_with_answers_{n}_{min_sections}.csv"
     # Write out the dataframe to a csv file in the same directory as the papers csv file
-    print(f"Writing out to {full_file_name}...")
+    print(f"Writing out to {full_file_name}")
     papers_df.to_csv(f"{full_file_name}", index=False)
     #papers_df.to_csv(f"{base_file_name}.answers.csv", index=False)
     

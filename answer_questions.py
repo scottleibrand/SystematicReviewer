@@ -99,6 +99,16 @@ def generate_prompt(question_string, context, question_type, categories):
 def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
     # Process the papers csv file
     papers_df = pd.read_csv(papers_csv_file)
+    # Get the path of the papers csv file
+    path = os.path.dirname(papers_csv_file)
+    # Get the base file name of the papers csv file
+    base_file_name = os.path.basename(papers_csv_file)
+    # Remove the extension
+    base_file_name = os.path.splitext(base_file_name)[0]
+    full_file_name = f"{path}/{base_file_name}.top_{n}_answers_{min_sections}_sections.csv"
+    
+    #TODO: If the file already exists, read it so we can skip the questions that are already answered for a given paper
+
     urls = papers_df['ArticleURL']
     for url in urls:
         # Skip "nan" URLs
@@ -164,6 +174,8 @@ def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
 
             # Store the intermediate results in a list
             intermediate_results = []
+
+            # TODO: Check if the answer is already in the csv file for this question and paper
 
             # Use this row's value from the Title and Abstract column of the csv, if present, as the context
             if 'Title' in papers_df.columns:
@@ -247,13 +259,6 @@ def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
             
     # Write out a copy of the papers_csv_file with the answers added, with the question string as the column name
     print(papers_df)
-    # Get the path of the papers csv file
-    path = os.path.dirname(papers_csv_file)
-    # Get the base file name of the papers csv file
-    base_file_name = os.path.basename(papers_csv_file)
-    # Remove the extension
-    base_file_name = os.path.splitext(base_file_name)[0]
-    full_file_name = f"{path}/{base_file_name}_with_answers_{n}_{min_sections}.csv"
     # Write out the dataframe to a csv file in the same directory as the papers csv file
     print(f"Writing out to {full_file_name}")
     papers_df.to_csv(f"{full_file_name}", index=False)

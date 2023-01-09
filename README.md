@@ -1,7 +1,9 @@
 # SystematicReviewer
-Tools for doing systematic reviews of scientific literature
+AI tools for doing systematic reviews of scientific literature
 
 ## Requirements
+
+### OpenAI API Key
 
 You'll need an OpenAI.com account (sign up at https://beta.openai.com/signup), and to create a key at https://beta.openai.com/account/api-keys
 
@@ -10,6 +12,10 @@ You can provide your key to the script by doing:
 export OPENAI_API_KEY=sk-YourSuperSecretBigLongStringOfRandomLettersAndNumbers
 ```
 in your terminal prior to running either of the scripts below.
+
+### Input data
+
+These scripts assume that you are starting with a .csv file containing an ArticleURL column containing the URL of each paper's full text HTML or PDF, and optionally Title and Abstract columns.
 
 ## Installation
 
@@ -23,7 +29,7 @@ pip install -r requirements.txt
 
 ### download_articles_and_embeddings.py
 
-This script downloads articles from a given CSV file, extracts the text from each article, and writes each section of the article to a separate text file. It then calculates the embedding of each section text file and combines all the section text files and their corresponding embeddings into a single JSON file.
+This script downloads papers from a given CSV file, extracts the text from each one, and writes each section of the paper to a separate text file. It then calculates the embedding of each section text file and combines all the section text files and their corresponding embeddings into a single JSON file.
 
 #### Usage
 
@@ -33,13 +39,13 @@ To use this script, run the following command:
 python download_articles_and_embeddings.py <filename>.csv
 ```
 
-where `<filename>.csv` is the name of the CSV file containing the articles to be downloaded and extracted.
+where `<filename>.csv` is the name of the CSV file containing the papers to be downloaded and extracted.
 
-The CSV should have an ArticleURL column containing the URL of each article's full text HTML or PDF.
+The CSV should have an ArticleURL column containing the URL of each paper's full text HTML or PDF.
 
 #### Output
 
-The script will output a JSON file containing the text and embeddings of each section of the article.
+The script will output a JSON file containing the text and embeddings of each section of the paper.
 
 ### answer_questions.py
 
@@ -51,15 +57,26 @@ This script is used to answer a given question using a combination of OpenAI's G
 To use the script, run the following command:
 
 ```
-python script.py <csv_file> <json_file> <question_string> [n]
+python answer_questions.py <filename>.csv combined_text_and_embeddings.json <questions.csv or string> [top_n_results=1] [min_sections=2]
 ```
 
 Where:
 
 - `csv_file` is the path to the CSV file containing the data to be processed.
 - `json_file` is the path to the JSON file containing the embeddings.
-- `question_string` is the question to be answered.
+- `questions.csv or string` is either a file containing the questions to be answered, or a single question string in quotes.
 - `n` is an optional parameter specifying the number of results to return (defaults to 3).
+
+The questions.csv must contain a Question column. It can optionally contain a Type column.
+
+The currently supported types are `Categorization` and `Open-ended`. If type is `Categorization`, include as many CategoryN fields as are required to list all of the categories you'd like it to choose between.
+
+Example:
+```
+Question,Type,Category1,Category2,Category3
+What kind of study does this describe?,Categorization,An animal study,A human clinical study,A review or meta-analysis of the literature,
+What methods did the study use?,Open-ended,,,,
+```
 
 #### Description
 

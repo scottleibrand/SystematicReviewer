@@ -1,5 +1,5 @@
 # SystematicReviewer
-Tools for doing systematic reviews of scientific literature
+AI tools for doing systematic reviews of scientific literature
 
 ## Requirements
 
@@ -57,15 +57,26 @@ This script is used to answer a given question using a combination of OpenAI's G
 To use the script, run the following command:
 
 ```
-python answer_questions.py <filename>.csv combined_text_and_embeddings.json <question_string> [n]
+python answer_questions.py <filename>.csv combined_text_and_embeddings.json <questions.csv or string> [top_n_results=1] [min_sections=2]
 ```
 
 Where:
 
 - `csv_file` is the path to the CSV file containing the data to be processed.
 - `json_file` is the path to the JSON file containing the embeddings.
-- `question_string` is the question to be answered. Be sure to put quotes around it.
+- `questions.csv or string` is either a file containing the questions to be answered, or a single question string in quotes.
 - `n` is an optional parameter specifying the number of results to return (defaults to 3).
+
+The questions.csv must contain a Question column. It can optionally contain a Type column.
+
+The currently supported types are `Categorization` and `Open-ended`. If type is `Categorization`, include as many CategoryN fields as are required to list all of the categories you'd like it to choose between.
+
+Example:
+```
+Question,Type,Category1,Category2,Category3
+What kind of study does this describe?,Categorization,An animal study,A human clinical study,A review or meta-analysis of the literature,
+What methods did the study use?,Open-ended,,,,
+```
 
 #### Description
 

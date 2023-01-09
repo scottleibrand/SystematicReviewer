@@ -356,13 +356,17 @@ def download_and_extract(csv_filename):
     Outputs:
     downloaded_files: An array of all the downloaded file names
     """
-    # Create a temporary directory to store the downloaded files
-    #temp_dir = tempfile.mkdtemp()
-
-    # Use /tmp/systematic_reviews as the temporary directory for now
-    temp_dir = '/tmp/systematic_reviews'
+    # Create a tmp/ directory to store the downloaded files in the same directory as the csv file
+    csv_dir = os.path.dirname(csv_filename)
+    temp_dir = os.path.join(csv_dir, 'tmp')
     # Make sure the temporary directory exists
     os.makedirs(temp_dir, exist_ok=True)
+    print (f"Using {temp_dir} as the temporary directory")
+    
+    # Use /tmp/systematic_reviews as the temporary directory for now
+    #temp_dir = '/tmp/systematic_reviews'
+    # Make sure the temporary directory exists
+    #os.makedirs(temp_dir, exist_ok=True)
 
     # Create an array of all the downloaded file names
     downloaded_files = []
@@ -543,7 +547,67 @@ def combine_text_and_embeddings_to_json(downloaded_files):
     # Write the list to the output file
     with open(output_file, 'w') as f:
         json.dump(combined_text_and_embeddings, f, indent=4)
-    print(f"Wrote combined text and embeddings to {output_file}")            
+    print(f"Wrote combined text and embeddings to {output_file}")         
+
+    return output_file   
+
+
+def update_csv_with_section_counts(csv_filename):
+    """
+    This function updates a CSV file with a SectionsFound header, counts the number of .embedding files present on disk for each URL, and populates the value into the SectionsFound column for each row. It then writes out the modified file to a .out.csv file with the same basename (without extension) as the original csv_filename.
+
+    Args:
+        csv_filename (str): The name of the CSV file containing the articles to be downloaded and extracted.
+
+    Returns:
+        output_filename (str): The name of the output CSV file.
+    """
+    # Get the base filename (without extension) from the input filename
+    base_filename = os.path.splitext(csv_filename)[0]
+    # Create the output filename
+    output_filename = base_filename + '.indexed.csv'
+
+    # Read the input CSV file
+    with open(csv_filename, 'r') as csv_file:
+        reader = csv.DictReader(csv_file)
+
+        # Create a new CSV file to store the updated info
+        with open(output_filename, 'w') as output_file:
+            # Add the SectionsFound header to the output CSV file
+            fieldnames = reader.fieldnames + ['SectionsFound']
+            writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+            writer.writeheader()
+
+            # Iterate over each row in the CSV file
+            for row in reader:
+                # Get the URL from the row
+                url = row['ArticleURL']
+                # If URL is blank, skip this row
+                if url == '':
+                    continue
+
+                # Find all $file.*.section.txt.embedding files
+                # Create the file path
+                file_name = os.path.basename(url)
+                if file_name == '':
+                    file_name = url.rsplit('/', 2)[-2]
+                # Truncate file_name if it's longer than 100 characters
+                if len(file_name) > 100:
+                    file_name = file_name[:100]
+                # Remove non-alphanumeric, non-period and non-underscore characters from the file name
+                file_name = re.sub(r'[^\w_.]', '', file_name)
+                file_path = os.path.join('/tmp/systematic_reviews', file_name)
+                section_files = glob.glob(file_path + '.*.section.txt.embedding')
+                # Count the number of section files
+                section_count = len(section_files)
+
+                # Update the row with the new info
+                row.update({'SectionsFound': section_count})
+                # Write the row to the output file
+                writer.writerow(row)
+
+    # Return the name of the output file
+    return output_filename
 
 # Download and extract articles from a CSV file and get embeddings
 def main():
@@ -590,7 +654,18 @@ def main():
             get_embeddings(section_file, output_file)
         
     # Combine all the section text files and their corresponding embeddings into a single json file
-    combine_text_and_embeddings_to_json(downloaded_files)
+    json_file = combine_text_and_embeddings_to_json(downloaded_files)
+
+    # Update the CSV file with the number of sections found for each article
+    output_filename = update_csv_with_section_counts(csv_filename)
+    print(f"Updated CSV file with section counts: {output_filename}")
+
+    # Find the path (not including filename) to the currently running script
+    script_path = os.path.dirname(os.path.realpath(__file__))
+
+
+    print("To run the next step, run:\n" + \
+        f"python {script_path}/answer_questions.py {output_filename} {json_file} <questions.csv or string>")
 
 
 if __name__ == '__main__':

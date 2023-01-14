@@ -166,7 +166,10 @@ def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
             if question_string not in papers_df.columns:
                 papers_df[question_string] = ''
             # Get the question type from the row
-            question_type = row['Type']
+            if 'Type' in question_df.columns:
+                question_type = row['Type']
+            else:
+                question_type = 'Open-ended'
             categories = []
             # If the question type is "Categorization", read in all of the columns starting with "Category" into a list
             if question_type == "Categorization":

@@ -260,7 +260,9 @@ def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
             #print(prompt)
             answer = ask_gpt(prompt)
             # Remove empty lines from the answer
-            answer = re.sub(r'\n\s*\n', '', answer)
+            #answer = re.sub(r'\n\s*\n', '', answer)
+            # Replace all newlines in the answer with spaces
+            answer = answer.replace('\n', ' ')
             print(answer)
             # Add this answer to the dataframe
             papers_df.loc[papers_df['ArticleURL'] == url, question_string] = answer

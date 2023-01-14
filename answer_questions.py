@@ -99,8 +99,11 @@ def generate_prompt(question_string, context, question_type, categories):
 def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
     # Process the papers csv file
     papers_df = pd.read_csv(papers_csv_file)
-    # Get the path of the papers csv file
+    # Get the absolute path of the papers csv file
+    papers_csv_file = os.path.abspath(papers_csv_file)
+    # Get the full path of the papers csv file
     path = os.path.dirname(papers_csv_file)
+    print(path)
     # Get the base file name of the papers csv file
     base_file_name = os.path.basename(papers_csv_file)
     # Remove the extension
@@ -217,6 +220,7 @@ def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
 
             # Search the embeddings
             matching_res = search_embeddings(matching_df, question_string, n)
+            print(matching_res)
 
 
 
@@ -241,14 +245,15 @@ def main(papers_csv_file, json_file, question_string_or_file, n, min_sections):
                 prompt = generate_prompt(question_string, context, question_type, categories)
                 #print(prompt)
                 answer = ask_gpt(prompt)
-                #print(answer)
+                print(answer)
                 intermediate_results.append(answer)
 
             # Ask GPT to provide an overall answer based on the intermediate results
             prompt = "Given the following " + str(len(intermediate_results)) + " answers:\n" + \
                 "\n".join(intermediate_results) + \
-                "\nPlease provide an overall answer to the question:\n" + \
-                question_string
+                "\nPlease provide an overall answer to the question, if possible:\n" + \
+                question_string + "\n" + \
+                "\nIf none of the responses above answer the question, please reply 'No answer found'\n"
             #print(prompt)
             answer = ask_gpt(prompt)
             # Remove empty lines from the answer

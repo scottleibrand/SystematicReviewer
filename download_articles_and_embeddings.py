@@ -596,8 +596,13 @@ def update_csv_with_section_counts(csv_filename):
                     file_name = file_name[:100]
                 # Remove non-alphanumeric, non-period and non-underscore characters from the file name
                 file_name = re.sub(r'[^\w_.]', '', file_name)
-                file_path = os.path.join('/tmp/systematic_reviews', file_name)
+                print(f"file_name: {file_name}")
+                csv_dir = os.path.dirname(csv_filename)
+                temp_dir = os.path.join(csv_dir, 'tmp')
+                file_path = os.path.join(temp_dir, file_name)
+                print(f"Looking for section files in {file_path}")
                 section_files = glob.glob(file_path + '.*.section.txt.embedding')
+                print(f"Found {len(section_files)} section files for {url}")
                 # Count the number of section files
                 section_count = len(section_files)
 
